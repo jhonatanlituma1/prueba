@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  webapiperson:
+    image: ${DOCKER_REGISTRY-}webapiperson
+    build:
+      context: .
+      dockerfile: WebApiPerson/Dockerfile
+    depends_on:
+      - mydb 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORT=5001
+      - ASPNETCORE_URLS=https://0.0.0.0:443;http://0.0.0.0:80
+      - ConnectionStrings__DefaultConnection=Host=mydb;Port=5432;Database=users;Username=postgres;Password=postgres
+    ports:
+      - "5000:80"
+      - "5001:443"
+
+  mydb:
+    image: postgres
+    container_name: mydb
+    ports: 
+      - "5435:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=users
+
+
